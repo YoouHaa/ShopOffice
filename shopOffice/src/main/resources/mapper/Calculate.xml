@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.calculate.dao.CalDao">
+		
+	<resultMap type="com.shop.table.vo.CalInfoVO" id="CalMap">
+		<result property="orderDt" 		column="order_dt" />
+		<result property="goodsCd" 		column="goods_cd" />
+		<result property="sellCnt" 		column="sell_cnt" />
+		<result property="sellPrice" 		column="sell_price" />
+		<result property="regDt" 		column="reg_dt" />
+		<result property="buyQty" 		column="buy_qty" />
+		<result property="orderPrice" 		column="order_price" />
+		<result property="unitPrice" 		column="unit_price" />
+		
+	</resultMap>
+		
+	<select id = "selectScheduleList" resultMap = "CalMap">
+		 SELECT
+   			 ORDER_DT,
+   			 ORDER_PRICE,
+   			 BUY_QTY
+			FROM
+			(
+              SELECT ROWNUM RN,
+                     ORDER_DT,
+                     ORDER_PRICE,
+                     BUY_QTY
+                  FROM (
+                SELECT
+			TO_CHAR(B.ORDER_DT, 'YYYY-MM-DD') AS ORDER_DT,
+   			 SUM(B.ORDER_PRICE * A.BUY_QTY) AS ORDER_PRICE,
+   			 SUM(A.BUY_QTY) AS BUY_QTY
+   			FROM TB_ORDER_GOODS A,
+    			 TB_ORDER_INFO B
+			WHERE
+    			A.ORDER_NO = B.ORDER_NO
+    			<if test = "orderDtFrom != null and orderDtFrom!='' ">
+					and to_char(ORDER_DT,'yyyy-mm-dd') <![CDATA[ >= ]]> #{orderDtFrom}
+				</if>
+				<if test = "orderDtTo != null and orderDtTo!= '' ">
+					and to_char(ORDER_DT,'yyyy-mm-dd') <![CDATA[ <= ]]> #{orderDtTo}
+				</if>
+			GROUP BY
+			    TO_CHAR(B.ORDER_DT, 'YYYY-MM-DD')
+			ORDER BY
+			    TO_CHAR(B.ORDER_DT, 'YYYY-MM-DD')
+			    )
+			    )
+			    WHERE RN<![CDATA[ >= ]]>(#{currentPage}-1)*#{countPerPage} 
+				AND RN<![CDATA[ <= ]]>#{currentPage}*#{countPerPage}
+			    
+	</select>	
+	<select id="selectTotalCalCount" resultType="integer">
+		SELECT COUNT(*)
+		FROM TB_ORDER_GOODS A,
+    			TB_ORDER_INFO B
+		WHERE A.ORDER_NO = B.ORDER_NO
+		<if test = "orderDtFrom != null and orderDtFrom!='' ">
+					and to_char(ORDER_DT,'yyyy-mm-dd') <![CDATA[ >= ]]> #{orderDtFrom}
+				</if>
+				<if test = "orderDtTo != null and orderDtTo!= '' ">
+					and to_char(ORDER_DT,'yyyy-mm-dd') <![CDATA[ <= ]]> #{orderDtTo}
+				</if>
+		</select>	
+		
+</mapper>
+

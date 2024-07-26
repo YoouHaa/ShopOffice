@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원 조회</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .pagination {
+      justify-content: center;
+    }
+  </style>
+</head>
+<body class="">
+<main id="main" class="main">
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body" style="padding-top: 20px;">
+            <form id="searchform" name="searchform">
+              <input type="hidden" id="currentPage" name="currentPage" value="1">
+              <table class="col-lg-12">
+                <tbody><tr>
+                  <td>
+                    <div class="row mb-4">
+                      <label for="userName" class="col-sm-1 col-form-label">회원명</label>
+                      <div class="col-sm-2">
+                        <input type="text" class="form-control" id="userName" name="userName">
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="row mb-4">
+                      <label for="replyYn" class="col-sm-1 col-form-label">탈퇴여부</label>
+                      <div class="col-sm-2">
+                        <select class="form-control" id="replyYn" name="replyYn">
+                          <option value="">선택</option>
+                          <option value="Y">예</option>
+                          <option value="N">아니오</option>
+                        </select>
+                      </div>
+                    </div>
+                  </td>
+                  <td rowspan="2">
+                    <button type="button" class="btn btn-info" onclick="UserSearch(1);">조회</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="row mb-3">
+                      <label for="joinDtFrom" class="col-sm-1 col-form-label">가입일</label>
+                      <div class="col-sm-2">
+                        <input type="date" class="form-control" id="joinDtFrom" name="joinDtFrom">
+                      </div>
+                      ~
+                      <div class="col-sm-2">
+                        <input type="date" class="form-control" id="joinDtTo" name="joinDtTo">
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody></table>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-hover" id="userTable">
+              <thead>
+                <tr>
+                  <th scope="col">No</th>
+                  <th scope="col">회원ID</th>
+                  <th scope="col">회원명</th>
+                  <th scope="col">이메일</th>
+                  <th scope="col">연락처</th>
+                  <th scope="col">가입일</th>
+                  <th scope="col">탈퇴여부</th>
+                  <th scope="col">탈퇴일</th>
+                </tr>
+              </thead>
+              <tbody><tr onclick="showUserDetailModal(&#39;user001&#39;)"><th scope="row">1</th><td>user001</td><td>John Doe</td><td>john@example.com</td><td>123-456-7890</td><td>2024-05-20</td><td>N</td><td>-</td></tr><tr onclick="showUserDetailModal(&#39;user002&#39;)"><th scope="row">2</th><td>user002</td><td>Jane Smith</td><td>jane@example.com</td><td>987-654-3210</td><td>2024-05-18</td><td>Y</td><td>2024-05-19</td></tr></tbody>
+            </table>
+            <nav aria-label="Page navigation example">
+              <ul class="pagination" id="userPaging"></ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- 모달 -->
+<div class="modal fade" id="userDetailModal" tabindex="-1" aria-labelledby="userDetailModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">사용자 상세 정보</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-hover" id="userDetailTable">
+          <thead>
+            <tr>
+              <th scope="col">항목</th>
+              <th scope="col">내용</th>
+            </tr>
+          </thead>
+          <tbody><tr><td>사용자 ID</td><td>user001</td></tr><tr><td>사용자명</td><td>John Doe</td></tr><tr><td>이메일</td><td>john@example.com</td></tr><tr><td>연락처</td><td>123-456-7890</td></tr><tr><td>주소</td><td>1234 Main St, Anytown, USA</td></tr><tr><td>가입일</td><td>2024-05-20</td></tr><tr><td>탈퇴여부</td><td>No</td></tr><tr><td>탈퇴일</td><td>N/A</td></tr><tr><td>주문횟수</td><td>5</td></tr><tr><td>주문금액</td><td>$500</td></tr></tbody>
+        </table>
+        <h5 class="modal-title">주문 이력</h5>
+        <table class="table table-hover" id="orderDetailTable">
+          <thead>
+            <tr>
+              <th scope="col">NO</th>
+              <th scope="col">주문번호</th>
+              <th scope="col">주문상품명</th>
+              <th scope="col">상품수량</th>
+              <th scope="col">주문금액</th>
+              <th scope="col">수취인</th>
+              <th scope="col">배송지</th>
+              <th scope="col">배송상태</th>
+              <th scope="col">주문서보기</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 주문 이력은 JavaScript에서 동적으로 채움 -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function UserSearch(no) {
+    $('#currentPage').val(no);
+    
+    // 임의의 데이터 생성
+    var dummyData = [
+      { userId: 'user001', userName: 'John Doe', email: 'john@example.com', phone: '123-456-7890', joinDt: '2024-05-20', withdrawYn: 'N', withdrawDt: null },
+      { userId: 'user002', userName: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210', joinDt: '2024-05-18', withdrawYn: 'Y', withdrawDt: '2024-05-19' },
+      // 여기에 더 많은 데이터 추가 가능
+    ];
+    
+    // 결과를 화면에 표시하고 모
+    displayUserData(dummyData);
+    showModal(dummyData);
+}
+
+function displayUserData(data) {
+    $('#userTable > tbody').empty();
+    data.forEach(function(item, index) {
+        var row = '<tr onclick="showUserDetailModal(\'' + item.userId + '\')">' + // 각 행에 클릭 이벤트 추가
+            '<th scope="row">' + (index + 1) + '</th>' +
+            '<td>' + item.userId + '</td>' +
+            '<td>' + item.userName + '</td>' +
+            '<td>' + item.email + '</td>' +
+            '<td>' + item.phone + '</td>' +
+            '<td>' + item.joinDt + '</td>' +
+            '<td>' + item.withdrawYn + '</td>' +
+            '<td>' + (item.withdrawDt ? item.withdrawDt : '-') + '</td>' +
+            '</tr>';
+        $('#userTable > tbody').append(row);
+    });
+}
+
+	function showUserDetailModal(userId) {
+	    var user = getUserById(userId); // 해당 userId에 해당하는 사용자 정보 가져오기
+	    $('#userId').text(user.userId);
+	    $('#userName').text(user.userName);
+	    $('#email').text(user.email);
+	    $('#phone').text(user.phone);
+	    $('#joinDt').text(user.joinDt);
+	    $('#withdrawYn').text(user.withdrawYn);
+	    $('#withdrawDt').text(user.withdrawDt ? user.withdrawDt : '-');
+	    $('#orderCount').text(user.orderCount ? user.orderCount : '-');
+	    $('#orderPrice').text(user.orderPrice ? user.orderPrice : '-');
+
+	    // 모달 보이기
+	    $('#userDetailModal').modal('show');
+	  }
+
+	 $('#userTable tbody').on('click', 'tr', function() {
+		    // 클릭한 행의 데이터를 가져와서 모달에 표시
+		    var userId = $(this).find('td:eq(1)').text(); // 두 번째 열에 있는 사용자 ID
+		    showUserDetailModal(userId);
+		  });
+
+		  // 모달에 사용자 상세 정보 표시
+		  function showUserDetailModal(userId) {
+		    // 임의의 데이터 생성
+		    var userData = {
+		      userId: userId,
+		      userName: 'John Doe',
+		      email: 'john@example.com',
+		      phone: '123-456-7890',
+		      address: '1234 Main St, Anytown, USA',
+		      joinDate: '2024-05-20',
+		      withdrawStatus: 'No',
+		      withdrawDate: 'N/A',
+		      orderCount: 5,
+		      orderAmount: '$500'
+		    };
+
+		    // 사용자 상세 정보 테이블 채우기
+		    $('#userDetailTable tbody').html('');
+		    $('#userDetailTable tbody').append('<tr><td>사용자 ID</td><td>' + userData.userId + '</td></tr>');
+		    $('#userDetailTable tbody').append('<tr><td>사용자명</td><td>' + userData.userName + '</td></tr>');
+		    $('#userDetailTable tbody').append('<tr><td>이메일</td><td>' + userData.email + '</td></tr>');
+		    $('#userDetailTable tbody').append('<tr><td>연락처</td><td>' + userData.phone + '</td></tr>');
+		    $('#userDetailTable tbody').append('<tr><td>주소</td><td>' + userData.address + '</td></tr>');
+		    $('#userDetailTable tbody').append('<tr><td>가입일</td><td>' + userData.joinDate + '</td></tr>');
+		    $('#userDetailTable tbody').append('<tr><td>탈퇴여부</td><td>' + userData.withdrawStatus + '</td></tr>');
+		    $('#userDetailTable tbody').append('<tr><td>탈퇴일</td><td>' + userData.withdrawDate + '</td></tr>');
+		    $('#userDetailTable tbody').append('<tr><td>주문횟수</td><td>' + userData.orderCount + '</td></tr>');
+		    $('#userDetailTable tbody').append('<tr><td>주문금액</td><td>' + userData.orderAmount + '</td></tr>');
+
+		    // 모달 보이기
+		    $('#userDetailModal').modal('show');
+		  }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+    

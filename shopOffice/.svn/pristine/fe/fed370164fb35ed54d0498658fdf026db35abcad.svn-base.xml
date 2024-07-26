@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.goods.dao.GoodsDao">
+	<resultMap type="com.shop.table.vo.GoodsInfoVO" id="GoodsMap">
+		<result property="ctCd" 		column="ct_cd" />
+		<result property="ctName" 		column="ct_name" />
+		<result property="ctLevel" 		column="ct_level" />
+		<result property="upCtCd" 		column="up_ct_cd" />
+		<result property="goodsCd" 		column="goods_cd" />
+		<result property="goodsName" 		column="goods_name" />
+		<result property="normalPrice" 		column="normal_price" />
+		<result property="sellPrice" 		column="sell_price" />
+		<result property="ivQty" 		column="iv_qty" />
+		<result property="goodsStatus" 		column="goods_status" />
+		<result property="supplierCd" 		column="supplier_cd" />
+		<result property="thumnailUrl" 		column="thumnail_url" />
+		<result property="content" 		column="content" />
+		<result property="regDt" 		column="reg_dt" />
+		<result property="supplierCd" 		column="supplier_cd" />
+		<result property="supplierName" 		column="supplier_name" />
+		<result property="categoryMiddle" 		column="category_middle" />
+		<result property="categoryHigh" 		column="category_high" />
+		</resultMap>
+		
+	<resultMap type="com.shop.table.vo.CategoryInfoVO" id="categoryMap">
+		<result property="ctCd" 		column="ct_cd" />
+		<result property="ctName" 		column="ct_name" />
+	</resultMap>	
+		<select id="selectlittlecate" resultMap="GoodsMap">
+		SELECT
+		CT_CD,
+		CT_NAME,
+		CT_LEVEL
+		FROM TB_GOODS_CATEGORY
+		WHERE 1=1
+		  and ct_level = #{ctLevel}
+		  <if test="upCtCd!=null and upCtCd!=''">
+		  and up_ct_cd = #{upCtCd}
+		  </if>
+		</select>
+		
+		<select id="selectsupplierName" resultMap="GoodsMap">
+		SELECT
+		SUPPLIER_CD,
+		SUPPLIER_NAME
+		FROM TB_SUPPLIER_INFO
+		</select>
+		
+		<select id="selectgoodsList" resultMap="GoodsMap">
+		SELECT
+		A.GOODS_CD,
+		A.GOODS_NAME,
+		(
+            SELECT 
+            LPAD('', (LEVEL))|| LTRIM(SYS_CONNECT_BY_PATH(CT_NAME, '>'), '>') 
+                FROM 
+                    TB_GOODS_CATEGORY
+                WHERE
+                    CT_CD = A.CT_CD
+                START WITH 
+                    UP_CT_CD IS NULL
+                CONNECT BY 
+                    PRIOR CT_CD = UP_CT_CD
+        ) CT_NAME,
+		A.SELL_PRICE,
+		A.IV_QTY,
+		A.REG_DT,
+		A.GOODS_STATUS,
+		A.SUPPLIER_CD
+		FROM TB_GOODS_INFO A , TB_GOODS_CATEGORY B
+        WHERE A.CT_CD = B.CT_CD
+        	<if test = "goodsName != null and goodsName != ''">
+			and goods_name like '%' ||#{goodsName}|| '%'
+			</if>
+			<if test = "goodsStatus != null and goodsStatus != ''">
+			and goods_status = #{goodsStatus} 
+			</if>
+			<if test = "supplierCd != null and supplierCd != ''">
+			and supplier_cd =#{supplierCd}
+			</if>
+			<if test="categorySmall!=null and categorySmall!=''">
+			and a.ct_cd = #{categorySmall}
+			</if>	
+			
+		</select>
+		<select id = "selectgoodsDetail" resultMap="GoodsMap">
+		SELECT
+		A.GOODS_CD,
+		A.GOODS_NAME,
+		A.NORMAL_PRICE,
+		A.IV_QTY,
+		B.CT_CD,
+		B.UP_CT_CD CATEGORY_MIDDLE ,
+		(
+		SELECT 
+		UP_CT_CD
+		FROM TB_GOODS_CATEGORY
+		WHERE CT_CD = B.UP_CT_CD
+		) CATEGORY_HIGH,
+		B.CT_LEVEL,
+		B.CT_NAME,
+		A.THUMNAIL_URL,
+		A.CONTENT,
+		A.SELL_PRICE,
+		A.GOODS_STATUS,
+		A.SUPPLIER_CD,
+		C.SUPPLIER_NAME
+		FROM TB_GOODS_INFO A, TB_GOODS_CATEGORY B , TB_SUPPLIER_INFO C
+		WHERE A.CT_CD = B.CT_CD
+		AND A.SUPPLIER_CD = C.SUPPLIER_CD
+		and a.goods_cd = #{goodsCd}
+		</select>
+		
+		<select id="selectgoodsCategoryList" resultMap="categoryMap">
+				select ct_cd, ct_name
+		from  tb_goods_category
+		where up_ct_cd = ( select up_ct_cd from tb_goods_category where ct_cd = #{ctCd} )
+		</select>
+		
+		
+		<select id="selectgoodmCategoryList" resultMap="categoryMap">
+			select ct_cd, ct_name
+			 from tb_goods_category
+			 where up_ct_cd in  (
+			    select up_ct_cd from tb_goods_category
+			    where ct_cd = ( select up_ct_cd from tb_goods_category where ct_cd = #{ctCd} )
+			 )
+		</select>
+		<select id ="selectgoodhCategoryList" resultMap="categoryMap">
+				select
+				ct_cd,ct_name
+				from tb_goods_category
+				where ct_level = '1'
+		</select>
+		<update id = "updategoodsUpdate">
+		UPDATE TB_GOODS_INFO SET
+		GOODS_NAME = #{goodsName},
+		NORMAL_PRICE = #{normalPrice},
+		SELL_PRICE = #{sellPrice},
+		IV_QTY = #{ivQty},
+		GOODS_STATUS = #{goodsStatus},
+		THUMNAIL_URL = #{thumnailUrl},
+		CT_CD = #{categorySmall},
+		CONTENT = #{content} 
+		WHERE GOODS_CD = #{goodsCd}
+		
+		</update>
+		<insert id = "newGoodsAdd">
+		INSERT INTO TB_GOODS_INFO
+		(
+		GOODS_CD
+		,GOODS_NAME
+		,NORMAL_PRICE
+		,SELL_PRICE
+		,IV_QTY
+		,GOODS_STATUS
+		,CT_CD
+		,REG_DT
+		<if test="supplierCd!=null and supplierCd!=''">,SUPPLIER_CD</if>
+		<if test="thumnailUrl!=null and thumnailUrl!=''">,THUMNAIL_URL</if>
+		<if test="content!=null and content!=''">,CONTENT</if>
+		)
+		VALUES(
+		#{goodsCd}
+		,#{goodsName}
+		,#{normalPrice}
+		,#{sellPrice}
+		,#{ivQty}
+		,#{goodsStatus}
+		,#{categorySmall}
+		,SYSDATE
+		<if test="supplierCd!=null and supplierCd!=''">,#{supplierCd}</if>
+		<if test="thumnailUrl!=null and thumnailUrl!=''">,#{thumnailUrl}</if>
+		<if test="content!=null and content!=''">,#{content}</if>
+		)
+		</insert>
+		
+</mapper>
+

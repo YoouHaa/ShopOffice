@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.dash.dao.DashDao">
+	<!--resultMap type="com.shop.table.vo.DashInfoVO" id="DashMap">
+		<result property="userId" 		column="user_id" />
+		<result property="goodsCd" 		column="goods_cd" />
+		<result property="supplierCd" 		column="supplier_cd" />
+		<result property="orderNo" 		column="order_no" />
+		<result property="orderDt" 		column="order_dt" />
+		<result property="orderStatus" 		column="order_status" />
+		<result property="userName" 		column="user_name" />
+		<result property="goodsName" 		column="goods_name" />
+		<result property="orderPrice" 		column="order_price" />
+		<result property="supplierName" 		column="supplier_name" />
+		<result property="goodsName" 		column="goods_name" />
+		<result property="orderGoodsName" 		column="order_goods_name" />
+		<result property="buyQty" 		column="buy_qty" />
+		<result property="unitPrice" 		column="unit_price" />
+		<result property="regDt" 		column="reg_dt" />
+		<result property="orderDate" 		column="order_date" />
+		<result property="totalPrice" 		column="total_price" />
+		
+		</resultMap>
+		
+	
+	<select id = "selectDashUserCount" resultType = "integer">
+	SELECT COUNT(*)
+	FROM TB_USER_INFO
+	</select>
+	
+	<select id = "selectDashGoodsCount" resultType = "integer">
+	SELECT COUNT(*)
+	FROM TB_GOODS_INFO
+	</select>
+	<select id = "selectDashsupplierCount" resultType = "integer">
+	SELECT COUNT(*)
+	FROM TB_SUPPLIER_INFO
+	</select>
+	<select id = "selectDashorderCount" resultType = "integer">
+	SELECT COUNT(*)
+	FROM TB_ORDER_INFO
+    WHERE TO_CHAR(ORDER_DT,'YYYYMMDD') = TO_CHAR(SYSDATE,'YYYYMMDD')
+	</select>
+	<select id = "selectDashStatusCount" resultType = "integer">
+	SELECT COUNT(*)
+	FROM TB_ORDER_INFO
+	</select>
+	
+	
+	<select id = "selectDashSatus" resultMap = "DashMap">
+	SELECT
+	ORDER_STATUS
+	FROM TB_ORDER_INFO	
+	</select>
+	<select id = "selectWorderList" resultMap = "DashMap">
+	SELECT
+	A.ORDER_NO,
+	A.USER_ID,
+	B.USER_NAME,
+	A.ORDER_GOODS_NAME,
+	A.ORDER_PRICE,
+	A.ORDER_STATUS
+	FROM TB_ORDER_INFO A, TB_USER_INFO B
+	WHERE A.USER_ID = B.USER_ID
+	AND ORDER_DT BETWEEN TO_CHAR(SYSDATE - 7, 'YYYY-MM-DD') AND TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+	</select>
+	
+	<select id = "selectWcomeList" resultMap = "DashMap">
+		SELECT 
+			ORDER_NO,
+			SUPPLIER_NAME,
+			GOODS_NAME,
+			ORDER_PRICE,
+			ORDER_STATUS
+		 FROM (
+			SELECT
+				ROWNUM RN,
+				A.ORDER_NO,
+				B.SUPPLIER_NAME,
+				C.GOODS_NAME,
+				A.ORDER_PRICE,
+				A.ORDER_STATUS
+			FROM TB_SUPPLIER_ORDER A , TB_SUPPLIER_INFO B, TB_GOODS_INFO C
+			WHERE A.SUPPLIER_CD = B.SUPPLIER_CD
+			AND B.SUPPLIER_CD = C.SUPPLIER_CD
+			AND A.REG_DT BETWEEN TO_CHAR(SYSDATE - 7, 'YYYY-MM-DD') AND TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+		)
+		WHERE RN<![CDATA[ >= ]]>(#{currentPage}-1)*#{countPerPage} 
+		AND RN<![CDATA[ <= ]]>#{currentPage}*#{countPerPage}
+	</select>
+	<select id="selectTotalWCount" resultType="integer">
+		SELECT COUNT(*)
+ 		FROM TB_SUPPLIER_ORDER A , TB_SUPPLIER_INFO B, TB_GOODS_INFO C
+	WHERE A.SUPPLIER_CD = B.SUPPLIER_CD
+	AND B.SUPPLIER_CD = C.SUPPLIER_CD
+	AND A.REG_DT BETWEEN TO_CHAR(SYSDATE - 7, 'YYYY-MM-DD') AND TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+			</select>
+	<select id = "selectMonthPrice" resultMap = "DashMap">
+	SELECT
+    TO_CHAR(REG_DT, 'YYYY-MM-DD') AS ORDER_DATE,
+    SUM(B.ORDER_PRICE * A.BUY_QTY) AS TOTAL_PRICE
+FROM
+    TB_ORDER_GOODS A,
+    TB_ORDER_INFO B
+WHERE
+    A.ORDER_NO = B.ORDER_NO
+    AND TRUNC(REG_DT) >= TRUNC(SYSDATE) - 30
+GROUP BY
+    TO_CHAR(REG_DT, 'YYYY-MM-DD')
+ORDER BY
+    TO_CHAR(REG_DT, 'YYYY-MM-DD')
+	</select>
+	<select id = "selectMonthOrder" resultMap = "DashMap">
+	SELECT
+	TO_CHAR(REG_DT, 'YYYY-MM-DD')AS ORDER_DATE,
+	ORDER_NO
+	FROM 
+		TB_ORDER_INFO
+	WHERE
+		TRUNC(REG_DT) >= TRUNC(SYSDATE) - 30
+	ORDER BY REG_DT
+	</select-->
+</mapper>
+

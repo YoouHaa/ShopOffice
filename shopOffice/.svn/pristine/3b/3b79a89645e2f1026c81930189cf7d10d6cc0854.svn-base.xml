@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.goods.dao.CategoryDao">
+	<resultMap type="com.shop.table.vo.CategoryInfoVO" id="CategoryMap">
+		<result property="ctCd" 		column="ct_cd" />
+		<result property="ctName" 		column="ct_name" />
+		<result property="upCtCd" 		column="up_ct_cd" />
+		<result property="regDt" 		column="reg_dt" />
+		<result property="ctLevel" 		column="ct_level" />
+		</resultMap>
+		
+		
+		<select id="selectCategoryList" resultMap="CategoryMap">
+		SELECT
+		CT_CD,
+		CT_NAME,
+		CT_LEVEL
+		FROM TB_GOODS_CATEGORY
+		WHERE 1=1
+		  and ct_level = #{ctLevel}
+		  <if test="upCtCd!=null and upCtCd!=''">
+		  and up_ct_cd = #{upCtCd}
+		  </if>
+		</select>
+		<select id="selectCategory" resultMap="CategoryMap">
+		SELECT
+		CT_CD,
+		CT_NAME,
+		CT_LEVEL,
+		UP_CT_CD
+		FROM TB_GOODS_CATEGORY
+		WHERE 1=1
+		  and ct_level = #{ctLevel}
+		  <if test="upCtCd!=null and upCtCd!=''">
+		  and up_ct_cd = #{upCtCd}
+		  </if>
+		</select>
+		<update id = "updateCategory">
+		UPDATE TB_GOODS_CATEGORY SET
+		CT_NAME = #{ctName}
+		WHERE CT_CD = #{ctCd}
+		</update>
+		<insert id = "newCategory">
+		INSERT INTO TB_GOODS_CATEGORY
+		(CT_CD,CT_NAME,CT_LEVEL,UP_CT_CD,REG_DT)
+		SELECT CT_CD,#{ctName},#{ctLevel},#{upCtCd},SYSDATE
+		FROM(
+		SELECT 
+        CASE WHEN CT_LEVEL = 1 then 
+        REPLACE('A'|| TO_CHAR( SUBSTR( MAX(CT_CD) , 2,3) +1,'00') ,' ','')
+        ELSE 
+        REPLACE('A'|| TO_CHAR( SUBSTR( MAX(CT_CD) , 2,3) +1,'000') ,' ','')
+        END CT_CD
+		FROM TB_GOODS_CATEGORY
+		WHERE 1=1
+		<if test="upCtCd!=null and upCtCd!=''">
+		 AND UP_CT_CD = #{upCtCd}	
+		</if> 
+		 AND CT_LEVEL = #{ctLevel}
+		 group by CT_LEVEL
+		) 
+		</insert>
+		
+		
+		
+		
+</mapper>
+

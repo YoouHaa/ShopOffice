@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.supplier.dao.SupplierDao">
+	<resultMap type="com.shop.table.vo.SupplierInfoVO" id="SupplierMap">
+		<result property="supplierCd" 		column="supplier_cd" />
+		<result property="supplierName" 		column="supplier_name" />
+		<result property="supplierCeo" 		column="supplier_ceo" />
+		<result property="phone" 		column="phone" />
+		<result property="opName" 		column="op_name" />
+		<result property="opPhone" 		column="op_phone" />
+		<result property="opEmail" 		column="op_email" />
+		<result property="supplierStatus" 		column="supplier_status" />
+		<result property="regDt" 		column="reg_dt" />
+		</resultMap>
+		
+		<select id = "selectsupplierList" resultMap="SupplierMap">
+		SELECT
+		SUPPLIER_CD,
+		SUPPLIER_NAME,
+		SUPPLIER_CEO,
+		PHONE,
+		OP_NAME,
+		OP_PHONE,
+		OP_EMAIL,
+		SUPPLIER_STATUS,
+		REG_DT
+		FROM TB_SUPPLIER_INFO
+		WHERE 1=1
+		<if test = "supplierName != null and supplierName != ''">
+		and supplier_name like '%' ||#{supplierName}|| '%'
+		</if>
+		<if test = "supplierStatus != null and supplierStatus != ''">
+		and supplier_status = #{supplierStatus}
+		</if>
+		</select>
+		<select id = "selectsupplierDetail" resultMap="SupplierMap">
+		SELECT
+		SUPPLIER_CD,
+		SUPPLIER_NAME,
+		SUPPLIER_CEO,
+		PHONE,
+		OP_NAME,
+		OP_PHONE,
+		OP_EMAIL,
+		SUPPLIER_STATUS
+		FROM TB_SUPPLIER_INFO
+		WHERE SUPPLIER_CD = #{supplierCd}
+		</select>
+		
+		<update id ="updateSupplier">
+		UPDATE TB_SUPPLIER_INFO SET
+		SUPPLIER_NAME = #{supplierName}
+		,SUPPLIER_CEO = #{supplierCeo}
+		,PHONE = #{phone1}||'-'||#{phone2}||'-'||#{phone3}
+		,OP_NAME = #{opName}
+		,OP_PHONE = #{opPhone1}||'-'||#{opPhone2}||'-'||#{opPhone3}
+		,OP_EMAIL = #{opEmail1}||'@'||#{opEmail2}
+		,SUPPLIER_STATUS = #{supplierStatus}
+		WHERE SUPPLIER_CD = #{supplierCd}
+		</update>
+		
+		<insert id = "newSupplierAdd">
+		INSERT INTO TB_SUPPLIER_INFO
+		(
+		SUPPLIER_CD,
+		SUPPLIER_NAME,
+		PHONE,
+		SUPPLIER_CEO,
+		OP_NAME,
+		OP_PHONE,
+		OP_EMAIL,
+		SUPPLIER_STATUS,
+		REG_DT
+		)VALUES(
+		#{supplierCd},
+		#{supplierName},
+		#{phone1}||'-'||#{phone2}||'-'||#{phone3},
+		#{supplierCeo},
+		#{opName},
+		#{opPhone1}||'-'||#{opPhone2}||'-'||#{opPhone3},
+		#{opEmail1}||'@'||#{opEmail2},
+		#{supplierStatus},
+		SYSDATE
+		)
+		</insert>
+
+		
+</mapper>
+

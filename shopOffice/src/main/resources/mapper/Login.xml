@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.login.dao.LoginDao">
+
+		<resultMap type="com.shop.table.vo.ManageInfoVO" id="manageMap">
+		<result property="manageId" column="manage_id"/>
+		<result property="managePwd" column="manage_pwd"/>
+		<result property="manageName" column="manage_name"/>
+		<result property="phone" column="phone"/>
+		<result property="email" column="email"/>
+		
+		
+		</resultMap>
+	<select id="selectManageInfo" resultMap="manageMap">
+		SELECT 
+			MANAGE_ID,
+			MANAGE_PWD,
+			MANAGE_NAME,
+			PHONE,
+			EMAIL
+		  FROM TB_MANAGE_INFO
+		 WHERE MANAGE_ID = #{manageId} 
+	</select>
+	
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.order.dao.OrderDao">
+			<resultMap type="com.shop.table.vo.OrderInfoVO" id="OrderMap">
+			<result property="orderNo" 		column="order_no" />
+			<result property="userId" 		column="order_no" />
+			<result property="orderGoodsName" 		column="order_no" />
+			<result property="orderPrice" 		column="order_no" />
+			<result property="orderStatus" 		column="order_no" />
+			<result property="orderDt" 		column="order_no" />
+			<result property="receiveName" 		column="order_no" />
+			<result property="zipCd" 		column="order_no" />
+			<result property="addr" 		column="order_no" />
+			<result property="orderNo" 		column="order_no" />
+			<result property="orderNo" 		column="order_no" />
+			
+			</resultMap>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>
+
